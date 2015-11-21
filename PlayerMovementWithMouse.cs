@@ -24,14 +24,10 @@ public class PlayerMovementWithMouse : MonoBehaviour {
 			clickTime = Time.time;
 			targetPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-//			int xval = (targetPosition.x - transform.position.x) > 0 ? 1 : (targetPosition.x - transform.position.x) < 0 ? -1 : 0;
-//			int yval = (targetPosition.y - transform.position.y) > 0 ? 1 : (targetPosition.y - transform.position.y) < 0 ? -1 : 0;
 			
 			relativePosition = new Vector2(
 				targetPosition.x - transform.position.x,
 				targetPosition.y - transform.position.y
-//				xval,
-//				yval
 				);
 			
 			anim.SetBool("isWalking", true);
@@ -46,22 +42,19 @@ public class PlayerMovementWithMouse : MonoBehaviour {
 		if(Input.GetMouseButton(1)){
 			if(Time.time != clickTime){
 				targetPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-//				int xval = (targetPosition.x - transform.position.x) > 0 ? 1 : (targetPosition.x - transform.position.x) < 0 ? -1 : 0;
-//				int yval = (targetPosition.y - transform.position.y) > 0 ? 1 : (targetPosition.y - transform.position.y) < 0 ? -1 : 0;
 				
 				relativePosition = new Vector2(
 					targetPosition.x - transform.position.x,
 					targetPosition.y - transform.position.y
-//					xval,
-//					yval
 					);
 				
 				anim.SetBool("isWalking", true);
 				anim.SetFloat ("input_x", relativePosition.x);
 				anim.SetFloat ("input_y", relativePosition.y);
 
-				rbody.MovePosition(rbody.position + relativePosition * Time.deltaTime);
+				Vector2 meh = getRawInput();
+
+				rbody.MovePosition(rbody.position + meh * 0.02f);
 			}
 		}else{
 			anim.SetBool("isWalking", false);
@@ -70,5 +63,28 @@ public class PlayerMovementWithMouse : MonoBehaviour {
 
 	}
 
+	//TODO this is crap.  make this better
+	Vector2 getRawInput(){
+		double x = System.Math.Round(targetPosition.x - transform.position.x, 1);
+		double y = System.Math.Round(targetPosition.y - transform.position.y, 1);
 
+		float xval = 0.0f;
+		float yval = 0.0f;
+
+		if(x > 0.49)
+			xval = 1.0f;
+		else if(x < -0.49)
+			xval = -1.0f;
+		else
+			xval = 0.0f;
+
+		if(y > 0.49)
+			yval = 1.0f;
+		else if(y < -0.49)
+			yval = -1.0f;
+		else
+			y = 0.0f;
+
+		return new Vector2(xval, yval);
+	}
 }
